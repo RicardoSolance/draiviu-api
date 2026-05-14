@@ -5,6 +5,7 @@ import compression from 'compression';
 import helmet from 'helmet';
 
 import { AppModule } from './app.module';
+import { env } from './config/env';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
@@ -16,7 +17,7 @@ async function bootstrap() {
     defaultVersion: '1',
   });
   app.use(helmet());
-  app.use(compression());
+  app.use(compression()); // reduce response size for better performance
   app.enableCors({
     origin: true,
     credentials: true,
@@ -43,8 +44,10 @@ async function bootstrap() {
 
   SwaggerModule.setup('docs', app, document);
 
-  await app.listen(process.env.PORT ?? 3000);
-  console.log(`🚀 Draiviu API running on: http://localhost:3000`);
-  console.log(`📚 Swagger docs available at: http://localhost:3000/docs`);
+  await app.listen(env.port);
+  console.log(`🚀 Draiviu API running on: http://localhost:${env.port}/api/v1`);
+  console.log(
+    `📚 Swagger docs available at: http://localhost:${env.port}/docs`,
+  );
 }
 void bootstrap();
